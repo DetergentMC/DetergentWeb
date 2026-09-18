@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>仕組み — DetergentMC</title>
+  <meta name="description" content="DetergentMC の構造。JVM をホストにして Rust 製サーバー本体を同居させる方法と、設計上の決定。">
+  <meta property="og:title" content="仕組み — DetergentMC">
+  <meta property="og:description" content="DetergentMC の構造。JVM をホストにして Rust 製サーバー本体を同居させる方法と、設計上の決定。">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="nav">
+    <a class="brand" href="./" aria-label="DetergentMC">
+      <svg width="28" height="28" viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="2" width="28" height="28" rx="7" fill="var(--accent)"/><path d="M10 9h6.5a6.5 7 0 0 1 0 14H10z" fill="none" stroke="#0b0f14" stroke-width="3.2"/></svg>
+      <span>DetergentMC</span>
+    </a>
+    <nav>
+      <a href="./">ホーム</a>
+      <a href="how.html" class="active">仕組み</a>
+      <a href="products.html">Core / Engine</a>
+      <a href="roadmap.html">ロードマップ</a>
+      <a href="versions.html">対応バージョン</a>
+      <a href="https://github.com/DetergentMC" rel="noopener">GitHub</a>
+    </nav>
+  </header>
+  <main>
+
+    <section class="page-head">
+      <h1>仕組み</h1>
+      <p class="lead">Paper は JVM の中にサーバー全体が入っています。DetergentEngine では JVM は<strong>プラグインを動かすための同居人</strong>で、サーバー本体はネイティブコードです。</p>
+    </section>
+
+    <section class="section">
+      <h2>プロセスの構造</h2>
+      <div class="diagram">
+        <div class="box">
+          <h3>Paper</h3>
+          <div class="stack">
+            <div class="layer jvm">JVM
+              <div class="layer">サーバー本体 (Java)</div>
+              <div class="layer">プラグイン (Java)</div>
+            </div>
+          </div>
+        </div>
+        <div class="box highlight">
+          <h3>DetergentEngine</h3>
+          <div class="stack">
+            <div class="layer jvm">JVM (ホスト)
+              <div class="layer rust">サーバー本体 (Rust, ネイティブ)</div>
+              <div class="layer">Java シム + プラグイン (Java)</div>
+            </div>
+          </div>
+        </div>
+        <div class="box">
+          <h3>DetergentCore</h3>
+          <div class="stack">
+            <div class="layer rust">サーバー本体 (Rust, ネイティブ)<br><small>JVM なし</small></div>
+          </div>
+        </div>
+      </div>
+      <p><code>java -jar detergentengine.jar</code> を実行すると、jar 内のネイティブライブラリ (Windows / Linux / macOS 用を同梱) が展開・読み込まれ、Rust のサーバーが JVM のプロセス内で起動します。JVM は二重に起動しません。<code>-Xmx</code> はそのままプラグイン用ヒープに効きます。</p>
+    </section>
+
+    <section class="section">
+      <h2>何が速くなり、何が変わらないか</h2>
+      <ul class="facts">
+        <li><strong>速くなるもの</strong> — チャンク生成・送信、ライティング、エンティティ/ブロックのティック、ネットワーク I/O、圧縮・暗号化。通常のサーバー負荷の大半で、すべて Rust が処理します。</li>
+        <li><strong>変わらないもの</strong> — プラグインの Java コード自体。JVM 上の Java は Java のままです。</li>
+        <li><strong>正直な注意点</strong> — Rust ⇄ Java の境界 (JNI) には 1 回あたりマイクロ秒オーダーのコストがあります。Java 側が購読しているイベントだけを転送し、頻出データはハンドル経由で渡す設計でこれを抑えます。</li>
+        <li><strong>メモリ</strong> — JVM ヒープはプラグイン分だけ。バニラサーバー本体が JVM に載らないので Paper より小さく済みます。Core 単体なら JVM は起動しません。</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>設計上の決定</h2>
+      <div class="grid">
+        <div class="card"><h3>専用スレッドのゲームループ</h3><p>20 TPS のティックは tokio に載せず専用 OS スレッドで回します。ネットワーク遅延がティック時間に影響しません。</p></div>
+        <div class="card"><h3>ゼロ再エンコードのチャンク</h3><p>チャンクセクションはワイヤ形式と同じパレット + packed bits で保持し、送信時にそのままコピーします。</p></div>
+        <div class="card"><h3>Bukkit と同じイベント順序</h3><p>LOWEST → MONITOR の優先度モデルを Rust 側のイベントバスで一元管理。Java 側は転送先のリスナーです。順序とキャンセル判定は Rust が持ちます。</p></div>
+        <div class="card"><h3>Mojang のデータは同梱しない</h3><p>初回起動時に EULA 同意の上で公式 server.jar からデータを生成します。配布物に Mojang 由来のバイトは含まれません。</p></div>
+        <div class="card"><h3>1 つの jar で全 OS</h3><p>Engine の jar には Windows x64 / Linux x64 / Linux arm64 / macOS arm64 のネイティブライブラリが同梱され、実行環境に合うものを展開します。</p></div>
+        <div class="card"><h3>クリーンルーム実装</h3><p>CraftBukkit / Spigot / Paper Server のコードは参照しません。API 実装は Paper API と Sponge API (MIT) を対象にします。</p></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>初回起動の流れ</h2>
+      <ol class="steps">
+        <li><code>detergent.toml</code> と <code>eula.txt</code> が生成されて停止します。</li>
+        <li><a href="https://aka.ms/MinecraftEULA" rel="noopener">Minecraft EULA</a> に同意するなら <code>eula.txt</code> を <code>eula=true</code> にします。</li>
+        <li>再起動すると公式 server.jar をダウンロード (SHA-1 検証) し、データジェネレータで <code>data/1.20.4/</code> を生成します。<strong>この時だけ Java 17+ が必要</strong>です (Engine では常に JVM があるので意識不要)。</li>
+        <li>以降の起動ではそのデータを読むだけです。</li>
+      </ol>
+    </section>
+
+    <section class="section">
+      <h2>よくある疑問</h2>
+      <dl class="faq">
+        <dt>Paper は Rust ですか?</dt><dd>いいえ、Paper は 100% Java です。Spigot → Paper → Purpur / Pufferfish / Folia の系譜はすべて JVM 上で動きます。</dd>
+        <dt>jar で起動するなら速度は Java と同じでは?</dt><dd>違います。jar は皮で、サーバー本体は同じプロセス内の Rust ネイティブコードです。JVM が実行するのはプラグインと Java シムだけです。</dd>
+        <dt>Rust は .rs のまま実行できないのですか?</dt><dd>Rust はコンパイル言語なので、ネイティブバイナリ (.exe / .so / .dylib) が「Rust がネイティブで動いている」状態です。Engine の jar にはそのバイナリが同梱されています。</dd>
+        <dt>他の Rust 製サーバーとの違いは?</dt><dd>Pumpkin、Valence、FerrumC などはバニラ互換までで Paper プラグインは動きません。「Paper プラグインが動く Rust サーバー」が DetergentEngine の狙いです。</dd>
+      </dl>
+    </section>
+  </main>
+  <footer>
+    <div class="footgrid">
+      <div>
+        <strong>DetergentMC</strong>
+        <p>外から見れば Java。中身は Rust。</p>
+      </div>
+      <div>
+        <a href="how.html">仕組み</a> · <a href="products.html">Core / Engine</a> · <a href="roadmap.html">ロードマップ</a> · <a href="versions.html">対応バージョン</a><br>
+        <a href="https://github.com/DetergentMC/DetergentCore" rel="noopener">DetergentCore</a> · <a href="https://github.com/DetergentMC/DetergentWeb" rel="noopener">このサイトのソース</a>
+      </div>
+    </div>
+    <p class="disclaimer">© 2026 DetergentMC · DetergentMC は Mojang Studios / Microsoft の公式製品ではなく、承認も受けていません。"Minecraft" は Mojang Synergies AB の商標です。</p>
+  </footer>
+</body>
+</html>

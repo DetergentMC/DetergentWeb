@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ロードマップ — DetergentMC</title>
+  <meta name="description" content="DetergentMC の開発状況と今後の計画。1.20.4 の完成、Paper API 互換、1.0〜最新の全バージョン対応、エイプリルフール版。">
+  <meta property="og:title" content="ロードマップ — DetergentMC">
+  <meta property="og:description" content="DetergentMC の開発状況と今後の計画。1.20.4 の完成、Paper API 互換、1.0〜最新の全バージョン対応、エイプリルフール版。">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="nav">
+    <a class="brand" href="./" aria-label="DetergentMC">
+      <svg width="28" height="28" viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="2" width="28" height="28" rx="7" fill="var(--accent)"/><path d="M10 9h6.5a6.5 7 0 0 1 0 14H10z" fill="none" stroke="#0b0f14" stroke-width="3.2"/></svg>
+      <span>DetergentMC</span>
+    </a>
+    <nav>
+      <a href="./">ホーム</a>
+      <a href="how.html">仕組み</a>
+      <a href="products.html">Core / Engine</a>
+      <a href="roadmap.html" class="active">ロードマップ</a>
+      <a href="versions.html">対応バージョン</a>
+      <a href="https://github.com/DetergentMC" rel="noopener">GitHub</a>
+    </nav>
+  </header>
+  <main>
+
+    <section class="page-head">
+      <h1>ロードマップ</h1>
+      <p class="lead">開発初期です。数値はヘッドレステストクライアントでの計測で、実クライアントでの検証はこれからです。</p>
+    </section>
+
+    <section class="section">
+      <h2>現在の状態</h2>
+      <div class="stats">
+        <div><span class="num">44<small>ms</small></span><span class="label">ログイン → ワールド参加 (ローカル)</span></div>
+        <div><span class="num">52<small>MB</small></span><span class="label">常駐メモリ (JVM ホスト込み)</span></div>
+        <div><span class="num">1.20.4</span><span class="label">対応バージョン (protocol 765)</span></div>
+      </div>
+      <ul class="roadmap">
+        <li class="done">Handshake / Status / Login (暗号化・圧縮) / Configuration / Play</li>
+        <li class="done">フラットワールドのチャンク送信、移動、チャット、Keep Alive</li>
+        <li class="done">初回起動時のバニラデータ生成 (Mojang データ非同梱)</li>
+        <li class="done"><code>java -jar</code> からの起動、ホスト JVM へのブリッジ接続</li>
+        <li class="done">CI: Core 4 OS バイナリ / Engine 4 ネイティブ同梱 jar</li>
+        <li>実クライアントでの検証</li>
+        <li>Java シムの同梱、Paper API の最小サブセット (Server / PluginManager / Scheduler)</li>
+        <li>エンティティ同期、ブロック設置・破壊、ワールド保存</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>今後の活動</h2>
+      <div class="phases">
+        <div class="phase">
+          <span class="phase-no">フェーズ 1</span>
+          <h3>1.20.4 を完成させる</h3>
+          <p>プレイヤー同士が見える、ブロックを置ける・壊せる、ワールドが保存される。バニラとして遊べる状態。</p>
+        </div>
+        <div class="phase">
+          <span class="phase-no">フェーズ 2</span>
+          <h3>Paper プラグイン互換</h3>
+          <p>軽量プラグインが <code>onEnable</code> まで到達する → イベント・スケジューラ・Player API → 主要プラグインが動く。</p>
+        </div>
+        <div class="phase">
+          <span class="phase-no">フェーズ 3</span>
+          <h3>1.0 から最新バージョンまで、すべてに対応する</h3>
+          <p>1.20.4 の次は、<strong>1.0 から最新リリースまでを順に対応</strong>します。プロトコル層をバージョン別モジュールにし、ワールドとティックの実装は共有します。対応状況は<a href="versions.html">対応バージョン</a>で公開します。</p>
+        </div>
+        <div class="phase">
+          <span class="phase-no">フェーズ 4</span>
+          <h3>エイプリルフール版も作る</h3>
+          <p>2.0 (2013)、15w14a (2015)、1.RV-Pre1 (2016)、3D Shareware v1.34 (2019)、20w14∞ (2020)、22w13oneBlockAtATime (2022)、23w13a_or_b (2023)、24w14potato (2024)、25w14craftmine (2025) など、<strong>エイプリルフール版のサーバーも制作対象</strong>です。今後のエイプリルフール版も対応します。</p>
+        </div>
+        <div class="phase">
+          <span class="phase-no">継続</span>
+          <h3>高速化</h3>
+          <p>領域並列ティック (Folia 的)、ホットパスイベントのハンドル化、チャンク送信のさらなる最適化。</p>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer>
+    <div class="footgrid">
+      <div>
+        <strong>DetergentMC</strong>
+        <p>外から見れば Java。中身は Rust。</p>
+      </div>
+      <div>
+        <a href="how.html">仕組み</a> · <a href="products.html">Core / Engine</a> · <a href="roadmap.html">ロードマップ</a> · <a href="versions.html">対応バージョン</a><br>
+        <a href="https://github.com/DetergentMC/DetergentCore" rel="noopener">DetergentCore</a> · <a href="https://github.com/DetergentMC/DetergentWeb" rel="noopener">このサイトのソース</a>
+      </div>
+    </div>
+    <p class="disclaimer">© 2026 DetergentMC · DetergentMC は Mojang Studios / Microsoft の公式製品ではなく、承認も受けていません。"Minecraft" は Mojang Synergies AB の商標です。</p>
+  </footer>
+</body>
+</html>

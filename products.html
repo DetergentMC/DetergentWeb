@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Core と Engine — DetergentMC</title>
+  <meta name="description" content="オープンソースの DetergentCore と、プラグイン互換・高速化を加えた製品版 DetergentEngine の違い。">
+  <meta property="og:title" content="Core と Engine — DetergentMC">
+  <meta property="og:description" content="オープンソースの DetergentCore と、プラグイン互換・高速化を加えた製品版 DetergentEngine の違い。">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="nav">
+    <a class="brand" href="./" aria-label="DetergentMC">
+      <svg width="28" height="28" viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="2" width="28" height="28" rx="7" fill="var(--accent)"/><path d="M10 9h6.5a6.5 7 0 0 1 0 14H10z" fill="none" stroke="#0b0f14" stroke-width="3.2"/></svg>
+      <span>DetergentMC</span>
+    </a>
+    <nav>
+      <a href="./">ホーム</a>
+      <a href="how.html">仕組み</a>
+      <a href="products.html" class="active">Core / Engine</a>
+      <a href="roadmap.html">ロードマップ</a>
+      <a href="versions.html">対応バージョン</a>
+      <a href="https://github.com/DetergentMC" rel="noopener">GitHub</a>
+    </nav>
+  </header>
+  <main>
+
+    <section class="page-head">
+      <h1>Core と Engine</h1>
+      <p class="lead">DetergentCore は単体で完動するオープンソースのサーバー。DetergentEngine は Core を取り込み、プラグイン互換と高速化を加えた別バイナリです。</p>
+    </section>
+
+    <section class="section">
+      <div class="compare">
+        <table>
+          <thead>
+            <tr><th></th><th>DetergentCore</th><th>DetergentEngine</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>公開</td><td>オープンソース (Apache-2.0)</td><td>非公開・有料</td></tr>
+            <tr><td>配布形態</td><td>OS 別ネイティブバイナリ</td><td><code>detergentengine.jar</code> (全 OS 対応)</td></tr>
+            <tr><td>起動</td><td><code>./detergentcore</code></td><td><code>java -jar detergentengine.jar</code></td></tr>
+            <tr><td>バニラ互換サーバー</td><td>○</td><td>○</td></tr>
+            <tr><td>Rust ネイティブプラグイン</td><td>○</td><td>○</td></tr>
+            <tr><td>Paper / Sponge プラグイン互換</td><td>—</td><td>○ (開発中)</td></tr>
+            <tr><td>領域並列ティック</td><td>—</td><td>○ (予定)</td></tr>
+            <tr><td>管理パネル・サポート</td><td>—</td><td>○ (予定)</td></tr>
+            <tr><td>JVM</td><td>不要</td><td>ホストとして使用</td></tr>
+            <tr><td>リポジトリ</td><td><a href="https://github.com/DetergentMC/DetergentCore" rel="noopener">DetergentMC/DetergentCore</a></td><td>非公開</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>なぜこの分け方か</h2>
+      <p>「Core だけでは動かない」ようにはしていません。動かないものはコミュニティが試さず、バグ報告も来ないからです。Core はバニラ互換の完動サーバーとして公開し、Engine は<strong>プラグイン互換という最も難しく価値の大きい部分</strong>を担います。Core が単体で動くことは、Engine の品質保証にもなります (ネットワーク層やワールド処理のバグを Core のユーザーが先に踏んでくれる)。</p>
+    </section>
+
+    <section class="section">
+      <h2>ライセンス方針</h2>
+      <div class="grid">
+        <div class="card"><h3>Core は Apache-2.0</h3><p>許諾型なので Engine (非公開) が Core にリンクできます。外部コントリビュートも受け付けます。</p></div>
+        <div class="card"><h3>Engine は独自 EULA</h3><p>ソース非公開。ライセンス認証と配布条件は製品化時に公開します。</p></div>
+        <div class="card"><h3>Paper API / Sponge API (MIT) を対象</h3><p>Java シムは MIT ライセンスの API に対して実装します。Spigot 固有 API は非対応です。</p></div>
+        <div class="card"><h3>GPL コードは参照しない</h3><p>CraftBukkit / Spigot / Paper Server (GPLv3) のコードは参照も流用もしないクリーンルーム実装です。</p></div>
+        <div class="card"><h3>Mojang のデータ・コードを配布しない</h3><p>Core も Engine も、初回起動時にユーザーの EULA 同意の上で生成します。</p></div>
+        <div class="card"><h3>非公式</h3><p>Mojang / Microsoft の公式製品ではなく、承認も受けていません。製品名に "Minecraft" を含めません。</p></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>入手</h2>
+      <p>DetergentCore は <a href="https://github.com/DetergentMC/DetergentCore/releases" rel="noopener">GitHub Releases</a> から。DetergentEngine の販売形態と価格は未定です。準備ができ次第このページで案内します。</p>
+    </section>
+  </main>
+  <footer>
+    <div class="footgrid">
+      <div>
+        <strong>DetergentMC</strong>
+        <p>外から見れば Java。中身は Rust。</p>
+      </div>
+      <div>
+        <a href="how.html">仕組み</a> · <a href="products.html">Core / Engine</a> · <a href="roadmap.html">ロードマップ</a> · <a href="versions.html">対応バージョン</a><br>
+        <a href="https://github.com/DetergentMC/DetergentCore" rel="noopener">DetergentCore</a> · <a href="https://github.com/DetergentMC/DetergentWeb" rel="noopener">このサイトのソース</a>
+      </div>
+    </div>
+    <p class="disclaimer">© 2026 DetergentMC · DetergentMC は Mojang Studios / Microsoft の公式製品ではなく、承認も受けていません。"Minecraft" は Mojang Synergies AB の商標です。</p>
+  </footer>
+</body>
+</html>

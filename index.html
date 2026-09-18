@@ -3,31 +3,33 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>DetergentMC — Paper 互換の Rust 製 Minecraft サーバー</title>
+  <title>DetergentMC — Paper 互換を目指す Rust 製 Minecraft サーバー</title>
   <meta name="description" content="DetergentMC は Rust で書かれた高速・軽量な Minecraft Java Edition サーバー。DetergentCore はオープンソース、DetergentEngine は Paper / Sponge プラグイン互換を備えた製品版。">
-  <meta property="og:title" content="DetergentMC">
-  <meta property="og:description" content="外から見れば Java、中身は Rust。Paper 互換を目指す Minecraft サーバー。">
+  <meta property="og:title" content="DetergentMC — Paper 互換を目指す Rust 製 Minecraft サーバー">
+  <meta property="og:description" content="DetergentMC は Rust で書かれた高速・軽量な Minecraft Java Edition サーバー。DetergentCore はオープンソース、DetergentEngine は Paper / Sponge プラグイン互換を備えた製品版。">
   <meta property="og:type" content="website">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <header class="nav">
-    <a class="brand" href="#top" aria-label="DetergentMC">
+    <a class="brand" href="./" aria-label="DetergentMC">
       <svg width="28" height="28" viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="2" width="28" height="28" rx="7" fill="var(--accent)"/><path d="M10 9h6.5a6.5 7 0 0 1 0 14H10z" fill="none" stroke="#0b0f14" stroke-width="3.2"/></svg>
       <span>DetergentMC</span>
     </a>
     <nav>
-      <a href="#how">仕組み</a>
-      <a href="#products">Core / Engine</a>
-      <a href="#status">開発状況</a>
+      <a href="./" class="active">ホーム</a>
+      <a href="how.html">仕組み</a>
+      <a href="products.html">Core / Engine</a>
+      <a href="roadmap.html">ロードマップ</a>
+      <a href="versions.html">対応バージョン</a>
       <a href="https://github.com/DetergentMC" rel="noopener">GitHub</a>
     </nav>
   </header>
+  <main>
 
-  <main id="top">
     <section class="hero">
-      <p class="eyebrow">Minecraft Java Edition 1.20.4 · Rust</p>
+      <p class="eyebrow">Minecraft Java Edition · Rust · 現在 1.20.4 対応</p>
       <h1>外から見れば Java。<br>中身は Rust。</h1>
       <p class="lead">
         DetergentMC は Rust で書かれた高速・軽量な Minecraft サーバーです。<br>
@@ -36,108 +38,42 @@
       </p>
       <div class="cta">
         <a class="btn primary" href="https://github.com/DetergentMC/DetergentCore" rel="noopener">DetergentCore を見る<span class="tag">OSS · Apache-2.0</span></a>
-        <a class="btn" href="#products">DetergentEngine について<span class="tag">開発中</span></a>
+        <a class="btn" href="products.html">DetergentEngine について<span class="tag">開発中</span></a>
       </div>
       <pre class="term" aria-label="起動コマンド"><span class="prompt">$</span> java -Xmx2G -jar detergentengine.jar
 <span class="dim">INFO  DetergentEngine running inside host JVM 21.0.10
 INFO  DetergentCore 1.20.4 listening on 0.0.0.0:25565 (12 net threads)</span></pre>
     </section>
 
-    <section id="how" class="section">
-      <h2>仕組み</h2>
-      <p class="sub">Paper は JVM の中にサーバー全体が入っています。DetergentEngine では JVM は<strong>プラグインを動かすための同居人</strong>で、サーバー本体はネイティブコードです。</p>
-      <div class="diagram">
-        <div class="box">
-          <h3>Paper</h3>
-          <div class="stack">
-            <div class="layer jvm">JVM
-              <div class="layer">サーバー本体 (Java)</div>
-              <div class="layer">プラグイン (Java)</div>
-            </div>
-          </div>
-        </div>
-        <div class="box highlight">
-          <h3>DetergentEngine</h3>
-          <div class="stack">
-            <div class="layer jvm">JVM (ホスト)
-              <div class="layer rust">サーバー本体 (Rust, ネイティブ)</div>
-              <div class="layer">Java シム + プラグイン (Java)</div>
-            </div>
-          </div>
-        </div>
-        <div class="box">
-          <h3>DetergentCore</h3>
-          <div class="stack">
-            <div class="layer rust">サーバー本体 (Rust, ネイティブ)<br><small>JVM なし</small></div>
-          </div>
-        </div>
+    <section class="section">
+      <div class="grid">
+        <a class="card link" href="how.html"><h3>仕組み →</h3><p>JVM をホストにして Rust のサーバー本体を同居させる構造。何が速くなり、何が変わらないか。</p></a>
+        <a class="card link" href="products.html"><h3>Core と Engine →</h3><p>オープンソースの Core と、プラグイン互換・高速化を加えた有料の Engine。ライセンスと配布形態。</p></a>
+        <a class="card link" href="roadmap.html"><h3>ロードマップ →</h3><p>1.20.4 の完成から、1.0〜最新までの全バージョン対応、エイプリルフール版まで。</p></a>
       </div>
-      <ul class="facts">
-        <li><strong>速くなるもの</strong> — チャンク生成・送信、ライティング、エンティティ/ブロックのティック、ネットワーク I/O、圧縮・暗号化。通常のサーバー負荷の大半。</li>
-        <li><strong>変わらないもの</strong> — プラグインの Java コード自体。JVM 上の Java は Java のまま。</li>
-        <li><strong>正直な注意点</strong> — Rust ⇄ Java の境界 (JNI) にはコストがあります。Java 側が購読しているイベントだけを転送し、頻出データはハンドル経由で渡す設計でこれを抑えます。</li>
-      </ul>
-    </section>
-
-    <section id="products" class="section">
-      <h2>Core と Engine</h2>
-      <div class="compare">
-        <table>
-          <thead>
-            <tr><th></th><th>DetergentCore</th><th>DetergentEngine</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>公開</td><td>オープンソース (Apache-2.0)</td><td>非公開・有料</td></tr>
-            <tr><td>配布形態</td><td>OS 別ネイティブバイナリ</td><td><code>detergentengine.jar</code> (全 OS 対応)</td></tr>
-            <tr><td>起動</td><td><code>./detergentcore</code></td><td><code>java -jar detergentengine.jar</code></td></tr>
-            <tr><td>バニラ互換サーバー</td><td>○</td><td>○</td></tr>
-            <tr><td>Rust ネイティブプラグイン</td><td>○</td><td>○</td></tr>
-            <tr><td>Paper / Sponge プラグイン互換</td><td>—</td><td>○ (開発中)</td></tr>
-            <tr><td>領域並列ティック</td><td>—</td><td>○ (予定)</td></tr>
-            <tr><td>管理パネル・サポート</td><td>—</td><td>○ (予定)</td></tr>
-            <tr><td>JVM</td><td>不要</td><td>ホストとして使用</td></tr>
-          </tbody>
-        </table>
-      </div>
-      <p class="note">Core は単体で完動するサーバーです。Engine は Core を取り込み、プラグイン互換と高速化を加えた別バイナリを出します。</p>
     </section>
 
     <section class="section">
-      <h2>設計</h2>
-      <div class="grid">
-        <div class="card"><h3>専用スレッドのゲームループ</h3><p>20 TPS のティックは tokio に載せず専用 OS スレッドで回します。ネットワーク遅延がティック時間に影響しません。</p></div>
-        <div class="card"><h3>ゼロ再エンコードのチャンク</h3><p>チャンクセクションはワイヤ形式と同じパレット + packed bits で保持し、送信時にそのままコピーします。</p></div>
-        <div class="card"><h3>Bukkit と同じイベント順序</h3><p>LOWEST → MONITOR の優先度モデルを Rust 側のイベントバスで一元管理。Java 側は転送先のリスナーです。</p></div>
-        <div class="card"><h3>Mojang のデータは同梱しない</h3><p>初回起動時に EULA 同意の上で公式 server.jar からデータを生成します。配布物に Mojang 由来のバイトは含まれません。</p></div>
-        <div class="card"><h3>1 つの jar で全 OS</h3><p>Engine の jar には Windows / Linux / macOS のネイティブライブラリが同梱され、実行環境に合うものを展開します。</p></div>
-        <div class="card"><h3>クリーンルーム実装</h3><p>CraftBukkit / Spigot / Paper Server のコードは参照しません。API 実装は Paper API と Sponge API (MIT) を対象にします。</p></div>
+      <h2>目指すところ</h2>
+      <div class="goals">
+        <div class="goal"><span class="num">1</span><div><h3>Paper プラグインがそのまま動く Rust サーバー</h3><p>既存の Paper / Sponge プラグインを修正なしで持ち込める。乗り換えコストをゼロに近づける。</p></div></div>
+        <div class="goal"><span class="num">2</span><div><h3>Minecraft のすべてのバージョンに対応する</h3><p>まず 1.20.4 を完成させ、その後 <strong>1.0 から最新バージョンまで</strong>を順に対応する。<a href="versions.html">対応バージョン一覧</a></p></div></div>
+        <div class="goal"><span class="num">3</span><div><h3>エイプリルフール版も作る</h3><p>2.0、15w14a、20w14∞、24w14potato、25w14craftmine といった<strong>エイプリルフール版のサーバーも制作対象</strong>にする。</p></div></div>
       </div>
-    </section>
-
-    <section id="status" class="section">
-      <h2>開発状況</h2>
-      <p class="sub">開発初期です。数値はヘッドレステストクライアントでの計測で、実クライアントでの検証はこれからです。</p>
-      <div class="stats">
-        <div><span class="num">44<small>ms</small></span><span class="label">ログイン → ワールド参加 (ローカル)</span></div>
-        <div><span class="num">52<small>MB</small></span><span class="label">常駐メモリ (JVM ホスト込み)</span></div>
-        <div><span class="num">1.20.4</span><span class="label">対応バージョン (protocol 765)</span></div>
-      </div>
-      <ul class="roadmap">
-        <li class="done">Handshake / Status / Login (暗号化・圧縮) / Configuration / Play</li>
-        <li class="done">フラットワールドのチャンク送信、移動、チャット、Keep Alive</li>
-        <li class="done">初回起動時のバニラデータ生成 (Mojang データ非同梱)</li>
-        <li class="done"><code>java -jar</code> からの起動、ホスト JVM へのブリッジ接続</li>
-        <li>実クライアントでの検証</li>
-        <li>エンティティ同期、ブロック設置・破壊、ワールド保存</li>
-        <li>Paper API の最小サブセット実装 → 軽量プラグインが <code>onEnable</code> まで到達</li>
-        <li>領域並列ティック</li>
-      </ul>
     </section>
   </main>
-
   <footer>
-    <p>© 2026 DetergentMC · <a href="https://github.com/DetergentMC" rel="noopener">GitHub</a></p>
-    <p class="disclaimer">DetergentMC は Mojang Studios / Microsoft の公式製品ではなく、承認も受けていません。"Minecraft" は Mojang Synergies AB の商標です。</p>
+    <div class="footgrid">
+      <div>
+        <strong>DetergentMC</strong>
+        <p>外から見れば Java。中身は Rust。</p>
+      </div>
+      <div>
+        <a href="how.html">仕組み</a> · <a href="products.html">Core / Engine</a> · <a href="roadmap.html">ロードマップ</a> · <a href="versions.html">対応バージョン</a><br>
+        <a href="https://github.com/DetergentMC/DetergentCore" rel="noopener">DetergentCore</a> · <a href="https://github.com/DetergentMC/DetergentWeb" rel="noopener">このサイトのソース</a>
+      </div>
+    </div>
+    <p class="disclaimer">© 2026 DetergentMC · DetergentMC は Mojang Studios / Microsoft の公式製品ではなく、承認も受けていません。"Minecraft" は Mojang Synergies AB の商標です。</p>
   </footer>
 </body>
 </html>
