@@ -252,8 +252,10 @@ pages['roadmap.html'] = page('roadmap', 'ロードマップ — DetergentMC', 'D
         <li class="done">初回起動時のバニラデータ生成 (Mojang データ非同梱)</li>
         <li class="done"><code>java -jar</code> からの起動、ホスト JVM へのブリッジ接続</li>
         <li class="done">CI: Core 4 OS バイナリ / Engine 4 ネイティブ同梱 jar</li>
+        <li class="done">Java シムの同梱、Paper API の最小サブセット (Server / PluginManager / Scheduler / 権限 / イベント)</li>
+        <li class="done">Paper プラグインの読み込み・有効化・イベント受信・同期/非同期タスク・broadcast (テストプラグインで確認)</li>
         <li>実クライアントでの検証</li>
-        <li>Java シムの同梱、Paper API の最小サブセット (Server / PluginManager / Scheduler)</li>
+        <li>Player / World API、Rust イベント → Bukkit イベント変換</li>
         <li>エンティティ同期、ブロック設置・破壊、ワールド保存</li>
       </ul>
     </section>
@@ -269,7 +271,7 @@ pages['roadmap.html'] = page('roadmap', 'ロードマップ — DetergentMC', 'D
         <div class="phase">
           <span class="phase-no">フェーズ 2</span>
           <h3>Paper プラグイン互換</h3>
-          <p>軽量プラグインが <code>onEnable</code> まで到達する → イベント・スケジューラ・Player API → 主要プラグインが動く。</p>
+          <p>軽量プラグインの <code>onEnable</code>・イベント・スケジューラまでは到達済み。次は Player / World API → 主要プラグインが動く。</p>
         </div>
         <div class="phase">
           <span class="phase-no">フェーズ 3</span>
